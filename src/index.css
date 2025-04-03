@@ -1,0 +1,155 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 24 95% 55%; /* Richer orange color */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 24 30% 96%; /* Light orange for secondary */
+    --secondary-foreground: 24 40% 30%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 24 80% 95%; /* Light orange for accent */
+    --accent-foreground: 24 40% 30%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 24 95% 55%; /* Match primary */
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 24 50% 25%; /* Dark orange for sidebar */
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 24 95% 55%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 24 50% 35%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 24 50% 35%;
+    --sidebar-ring: 24 95% 55%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 6.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 6.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 24 95% 55%; /* Keep orange as primary */
+    --primary-foreground: 222.2 84% 4.9%;
+
+    --secondary: 24 20% 15%; /* Dark orange for secondary */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 24 30% 20%; /* Dark orange for accent */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 24 95% 55%;
+    
+    --sidebar-background: 24 20% 15%; /* Darker orange for sidebar */
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 24 95% 55%;
+    --sidebar-primary-foreground: 222.2 84% 4.9%;
+    --sidebar-accent: 24 30% 25%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 24 30% 25%;
+    --sidebar-ring: 24 95% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .stat-card {
+    @apply p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow;
+  }
+  
+  .content-area {
+    @apply p-6;
+  }
+  
+  .badge-success {
+    @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200 text-xs px-2 py-1 rounded-full font-medium;
+  }
+  
+  .badge-warning {
+    @apply bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200 text-xs px-2 py-1 rounded-full font-medium;
+  }
+  
+  .badge-error {
+    @apply bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-200 text-xs px-2 py-1 rounded-full font-medium;
+  }
+
+  .btn-orange {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground;
+  }
+
+  .card-gradient {
+    @apply bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/40 dark:to-orange-900/30 backdrop-blur-sm border border-orange-100/50 dark:border-orange-800/20;
+  }
+
+  .dashboard-stat-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+  }
+  
+  .dark-toggle {
+    @apply relative inline-flex h-6 w-11 items-center rounded-full bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-[state=checked]:bg-primary;
+  }
+  
+  .dark-toggle-thumb {
+    @apply pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10;
+  }
+
+  .animation-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
