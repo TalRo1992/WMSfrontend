@@ -26,6 +26,7 @@ export function AppSidebar() {
   const navItems = [
     { name: "Dashboard", icon: BarChart3, path: "/dashboard" },
     { name: "Inventory", icon: Boxes, path: "/inventory" },
+    { name: "Product", icon: Boxes, path: "/product" },
     { name: "Orders", icon: ClipboardList, path: "/orders" },
     { name: "Warehouse", icon: LayoutGrid, path: "/warehouse" },
     { name: "Suppliers", icon: Users, path: "/suppliers" },

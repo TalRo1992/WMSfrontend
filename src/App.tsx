@@ -18,6 +18,7 @@ import Settings from "./pages/Settings";
 import Picking from "./pages/Picking";
 import { AuthProvider } from "./components/AuthProvider";
 import { ProtectedRoute, RedirectIfAuthenticated } from "./components/ProtectedRoute";
+import Product from "./pages/Product";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ const App = () => (
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="inventory" element={<Inventory />} />
+                <Route path="product" element={<Product />} />
                 <Route path="orders" element={<Orders />} />
                 <Route path="warehouse" element={<Warehouse />} />
                 <Route path="suppliers" element={<Suppliers />} />

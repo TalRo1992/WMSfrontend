@@ -6,11 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Warehouse() {
-  const { fetchProducts } = useInventoryStore();
+  const { fetchInventoryItems } = useInventoryStore();
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchInventoryItems();
+  }, [fetchInventoryItems]);
 
   return (
     <div className="content-area">

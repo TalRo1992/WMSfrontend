@@ -12,11 +12,12 @@ import { useAuth } from "@/components/AuthProvider";
 import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+  console.log("user", user);
   return (
     <SidebarProvider>
       <Suspense fallback={<div className="min-h-screen bg-background"></div>}>
@@ -47,6 +48,18 @@ const Index = () => {
                 <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 transition-colors">
                   <Bell className="h-5 w-5" />
                 </Button>
+                {/* <Avatar> */}
+                  <Tooltip>
+                    <TooltipTrigger>
+                    <Avatar>
+                      <AvatarFallback>{user.warehouse.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {user.warehouse}
+                    </TooltipContent>
+                  </Tooltip>
+                {/* </Avatar> */}
                 <motion.div 
                   initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}

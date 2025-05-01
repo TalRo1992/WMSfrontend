@@ -1,10 +1,6 @@
+import { useGlobalStore, User } from "@/store/useGlobalStore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-type User = {
-  name: string;
-  role: string;
-} | null;
 
 type AuthContextType = {
   user: User;
@@ -23,19 +19,22 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const {  warehouse, currentUser, fetchUser } = useGlobalStore();
+
   const [user, setUser] = useState<User>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in on initial load
+    console.log("current user", currentUser);
     const checkAuth = () => {
       const isAuth = localStorage.getItem("isAuthenticated") === "true";
-      const storedUser = localStorage.getItem("user");
+      // const storedUser = localStorage.getItem("user");
 
-      if (isAuth && storedUser) {
+      if (isAuth && currentUser) {
         try {
-          setUser(JSON.parse(storedUser));
+          setUser(currentUser);
         } catch (e) {
           setUser(null);
           localStorage.removeItem("isAuthenticated");
@@ -52,9 +51,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     // Demo credentials check
     return new Promise((resolve) => {
+      fetchUser(email); // Fetch user data based on email
       setTimeout(() => {
-        if (email === "admin@example.com" && password === "password") {
-          const userData = { name: "Einav Avriel", role: "CEO" };
+        if (currentUser && password === "password") {
+          const userData = { id: currentUser.id, email: currentUser.email, name: currentUser.name, role: currentUser.role, warehouse: currentUser.warehouse };
           setUser(userData);
           localStorage.setItem("isAuthenticated", "true");
           localStorage.setItem("user", JSON.stringify(userData));

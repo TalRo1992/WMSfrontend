@@ -12,7 +12,7 @@ import { Box, LayoutGrid, Package2, Clock } from "lucide-react";
 
 export default function Dashboard() {
   const { metrics, isLoading: isDashboardLoading, fetchDashboardData } = useDashboardStore();
-  const { fetchProducts } = useInventoryStore();
+  const { fetchInventoryItems: fetchProducts } = useInventoryStore();
   const { fetchOrders } = useOrdersStore();
 
   useEffect(() => {

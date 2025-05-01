@@ -15,7 +15,7 @@ import { BarcodeScanner } from "@/components/BarcodeScanner";
 
 export default function Picking() {
   const { orders, fetchOrders, updateOrderStatus } = useOrdersStore();
-  const { products, fetchProducts } = useInventoryStore();
+  const { products, fetchInventoryItems: fetchProducts } = useInventoryStore();
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [scannerActive, setScannerActive] = useState(false);

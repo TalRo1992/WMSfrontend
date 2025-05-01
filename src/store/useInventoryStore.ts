@@ -1,4 +1,5 @@
 
+import { createInventoryItems, getInventoryItems } from '@/api/inventory.api';
 import { create } from 'zustand';
 
 export type Product = {
@@ -12,11 +13,18 @@ export type Product = {
   status: 'In Stock' | 'Low Stock' | 'Out of Stock';
 };
 
+export interface InventoryItem {
+  sku: string;
+  name: string;
+  description: string;
+}
+
 export type InventoryStore = {
   products: Product[];
   isLoading: boolean;
   error: string | null;
-  fetchProducts: () => void;
+  fetchInventoryItems: () => void;
+  createInventoryItems: (items: InventoryItem[]) => void;
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
   removeProduct: (id: string) => void;
@@ -28,79 +36,94 @@ export const useInventoryStore = create<InventoryStore>((set, get) => ({
   isLoading: false,
   error: null,
   
-  fetchProducts: async () => {
+  fetchInventoryItems: async () => {
     set({ isLoading: true, error: null });
     try {
-      // Normally this would be an API call, but we'll mock for now
-      setTimeout(() => {
-        set({
-          products: [
-            {
-              id: '1',
-              sku: 'ELEC-1001',
-              name: 'Wireless Headphones',
-              category: 'Electronics',
-              quantity: 45,
-              location: 'A-101',
-              barcode: 'ELEC-1001',
-              status: 'In Stock',
-            },
-            {
-              id: '2',
-              sku: 'APP-2002',
-              name: 'Cotton T-Shirt',
-              category: 'Apparel',
-              quantity: 120,
-              location: 'B-203',
-              barcode: 'APP-2002',
-              status: 'In Stock',
-            },
-            {
-              id: '3',
-              sku: 'HOME-3003',
-              name: 'Coffee Maker',
-              category: 'Home Goods',
-              quantity: 8,
-              location: 'C-105',
-              barcode: 'HOME-3003',
-              status: 'Low Stock',
-            },
-            {
-              id: '4',
-              sku: 'TOOL-4004',
-              name: 'Power Drill',
-              category: 'Tools',
-              quantity: 0,
-              location: 'D-302',
-              barcode: 'TOOL-4004',
-              status: 'Out of Stock',
-            },
-            {
-              id: '5',
-              sku: 'ELEC-1002',
-              name: 'Bluetooth Speaker',
-              category: 'Electronics',
-              quantity: 32,
-              location: 'A-102',
-              barcode: 'ELEC-1002',
-              status: 'In Stock',
-            },
-            {
-              id: '6',
-              sku: 'APP-2003',
-              name: 'Denim Jeans',
-              category: 'Apparel',
-              quantity: 5,
-              location: 'B-205',
-              barcode: 'APP-2003',
-              status: 'Low Stock',
-            }
-          ],
-          isLoading: false,
-        });
-      }, 800);
+      console.log('Fetching inventory items...');
+      const res = await getInventoryItems();
+      set({ products: res || [], isLoading: false });
+      // setTimeout(() => {
+      //   set({
+      //     products: [
+      //       {
+      //         id: '1',
+      //         sku: 'ELEC-1001',
+      //         name: 'Wireless Headphones',
+      //         category: 'Electronics',
+      //         quantity: 45,
+      //         location: 'A-101',
+      //         barcode: 'ELEC-1001',
+      //         status: 'In Stock',
+      //       },
+      //       {
+      //         id: '2',
+      //         sku: 'APP-2002',
+      //         name: 'Cotton T-Shirt',
+      //         category: 'Apparel',
+      //         quantity: 120,
+      //         location: 'B-203',
+      //         barcode: 'APP-2002',
+      //         status: 'In Stock',
+      //       },
+      //       {
+      //         id: '3',
+      //         sku: 'HOME-3003',
+      //         name: 'Coffee Maker',
+      //         category: 'Home Goods',
+      //         quantity: 8,
+      //         location: 'C-105',
+      //         barcode: 'HOME-3003',
+      //         status: 'Low Stock',
+      //       },
+      //       {
+      //         id: '4',
+      //         sku: 'TOOL-4004',
+      //         name: 'Power Drill',
+      //         category: 'Tools',
+      //         quantity: 0,
+      //         location: 'D-302',
+      //         barcode: 'TOOL-4004',
+      //         status: 'Out of Stock',
+      //       },
+      //       {
+      //         id: '5',
+      //         sku: 'ELEC-1002',
+      //         name: 'Bluetooth Speaker',
+      //         category: 'Electronics',
+      //         quantity: 32,
+      //         location: 'A-102',
+      //         barcode: 'ELEC-1002',
+      //         status: 'In Stock',
+      //       },
+      //       {
+      //         id: '6',
+      //         sku: 'APP-2003',
+      //         name: 'Denim Jeans',
+      //         category: 'Apparel',
+      //         quantity: 5,
+      //         location: 'B-205',
+      //         barcode: 'APP-2003',
+      //         status: 'Low Stock',
+      //       }
+      //     ],
+      //     isLoading: false,
+      //   });
+      // }, 800);
     } catch (error) {
       set({ error: 'Failed to fetch products', isLoading: false });
+    }
+  },
+
+  createInventoryItems: async (items: InventoryItem[]) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await createInventoryItems(items)
+      set((state) => ({
+        products: [...state.products, ...res],
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({ error: 'Failed to create products', isLoading: false });
     }
   },
   
