@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectTrigger,
@@ -9,11 +9,18 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "./ui/checkbox";
+import { useGlobalStore } from "@/store/useGlobalStore";
 
 const NewInventoryWizard = ({ productsList }) => {
+    const {currentUser, warehouseData, fetchWarehouseData} = useGlobalStore();
     const [step, setStep] = useState(1);
     // const [selectedProduct, setSelectedProduct] = useState("");
 
+    useEffect(() => {
+        fetchWarehouseData(currentUser.warehouseCode);
+        console.log("Current User:", currentUser);
+        console.log("Warehouse Data:", warehouseData);
+    }, []);
     const [inventoryItems, setInventoryItems] = useState([
         { id: 1, product: "", quantity: "" }
     ]);
@@ -103,7 +110,7 @@ const NewInventoryWizard = ({ productsList }) => {
             {/* Step 2 */}
             {step === 2 && (
                 <div className="flex flex-col gap-4">
-                    <div className="text-lg font-bold">Step 2: Assign Warehouse</div>
+                    <div className="text-lg font-bold">Step 2: Assign Location</div>
 
                     {inventoryItems.map((item: any) => (
                         <Card key={item.id} className="w-full p-4 space-y-4">
@@ -112,39 +119,12 @@ const NewInventoryWizard = ({ productsList }) => {
                                     <p className="text-sm font-medium">{item.product || "Unnamed Product"}</p>
                                     <p className="text-xs text-muted-foreground">Quantity: {item.quantity}</p>
                                 </div>
-                                {/* <Checkbox
-                    checked={!!item.selected}
-                    onCheckedChange={(checked) =>
-                    setInventoryItems((prev) =>
-                        prev.map((i) =>
-                        i.id === item.id ? { ...i, selected: !!checked } : i
-                        )
-                    )
-                    }
-                /> */}
                             </div>
 
                             {(
                                 <div className="space-y-3">
                                     {/* Select Warehouse */}
-                                    <Select
-                                        value={item.warehouse || ""}
-                                        onValueChange={(value) =>
-                                            setInventoryItems((prev) =>
-                                                prev.map((i) =>
-                                                    i.id === item.id ? { ...i, warehouse: value } : i
-                                                )
-                                            )
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select warehouse" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Main">Main Warehouse</SelectItem>
-                                            <SelectItem value="Backup">Backup Warehouse</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <p className="text-sm font-medium">{}</p>
 
                                     {/* Location + Zone (only if warehouse selected) */}
                                     {item.warehouse && (

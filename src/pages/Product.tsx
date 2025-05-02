@@ -34,11 +34,11 @@ export default function Product() {
         setFilteredProducts(res); // Initialize `filteredProducts` with all products
       } catch (error) {
         console.error("Error fetching products:", error);
-        toast({
-          title: "Fetch Error",
-          description: "Failed to fetch products.",
-          variant: "destructive",
-        });
+        // toast({
+        //   title: "Fetch Error",
+        //   description: "Failed to fetch products.",
+        //   variant: "destructive",
+        // });
       }
     };
     fetchProducts();

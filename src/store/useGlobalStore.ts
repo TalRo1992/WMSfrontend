@@ -1,4 +1,5 @@
 
+import { fetchWarehouseLocations } from '@/api/warehouse.api';
 import { create } from 'zustand';
 
 export type Order = {
@@ -23,17 +24,53 @@ export type User = {
   warehouse: string;
   warehouseCode: string;
 }
-export type GlobalStore = {
+
+type SlotOutput = {
+  name: string;
+  shelf: string;
+  totalCapacity: number;
+  usedCapacity: number;
+  locationCode: string;
+};
+
+type ShelfOutput = {
+  name: string;
+  aisle: string;
+  totalCapacity: number;
+  usedCapacity: number;
+  slots: SlotOutput[];
+};
+
+type AisleOutput = {
+  name: string;
+  zone: string;
+  shelfQuantity: number;
+  totalCapacity: number;
+  usedCapacity: number;
+  shelves: ShelfOutput[];
+};
+
+export type WarehouseLocations = {
+  name: string;
+  aisleQuantity: number;
   warehouse: string;
+  totalCapacity: number;
+  usedCapacity: number;
+  aisles: AisleOutput[];
+};
+
+
+export type GlobalStore = {
   currentUser: User;
+  warehouseData: WarehouseLocations[] | null;
   isLoading: boolean;
   error: string | null;
   fetchUser: (email: string) => void;
+  fetchWarehouseData: (warehouseCode: string) => void;
   
 };
 
 export const useGlobalStore = create<GlobalStore>((set) => ({
-  warehouse: 'Main Warehouse',
   currentUser: {
     id: '1',
     name: 'John Doe',
@@ -42,6 +79,7 @@ export const useGlobalStore = create<GlobalStore>((set) => ({
     warehouse: 'Main Warehouse',
     warehouseCode: 'WH001',
   },
+  warehouseData: null,
   isLoading: false,
   error: null,
   fetchUser: (email:string) => {
@@ -61,5 +99,21 @@ export const useGlobalStore = create<GlobalStore>((set) => ({
         error: null,
       });
     }, 1000);
+  },
+  fetchWarehouseData: async (warehouseCode: string) => {
+    set({ isLoading: true });
+    // Simulate fetching warehouse data
+    const response = await fetchWarehouseLocations(warehouseCode);
+     // Assuming the API returns data in this format
+    if (response) {
+      set(
+        {
+          warehouseData: response,
+          isLoading: false,
+          error: null,
+        }
+      );
+    }
+
   },
 }));

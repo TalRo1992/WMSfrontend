@@ -100,7 +100,7 @@ export default function Inventory() {
             <SelectValue placeholder="Select a product" />
           </SelectTrigger>
           <SelectContent>
-            {productsList.map((product) => (
+            {productsList?.map((product) => (
               <SelectItem key={product.id} value={product.name}>
                 {product.name}
               </SelectItem>
@@ -199,7 +199,7 @@ export default function Inventory() {
               Enter the details for the new location.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          {productsList.length > 0 && <NewInventoriesWizard productsList={productsList} />}
+          {productsList?.length > 0 && <NewInventoriesWizard productsList={productsList} />}
           <AlertDialogFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
               Cancel

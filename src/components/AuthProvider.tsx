@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const {  warehouse, currentUser, fetchUser } = useGlobalStore();
+    const {  currentUser, fetchUser } = useGlobalStore();
 
   const [user, setUser] = useState<User>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       fetchUser(email); // Fetch user data based on email
       setTimeout(() => {
         if (currentUser && password === "password") {
-          const userData = { id: currentUser.id, email: currentUser.email, name: currentUser.name, role: currentUser.role, warehouse: currentUser.warehouse };
+          const userData = { id: currentUser.id, email: currentUser.email, name: currentUser.name, role: currentUser.role, warehouse: currentUser.warehouse, warehouseCode: currentUser.warehouseCode };
           setUser(userData);
           localStorage.setItem("isAuthenticated", "true");
           localStorage.setItem("user", JSON.stringify(userData));

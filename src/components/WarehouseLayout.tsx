@@ -8,8 +8,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { Input } from "./ui/input";
 import { createLocation, Location } from "@/api/locations.api";
-import { useGlobalStore } from "@/store/useGlobalStore";
-import { getZonesStructure } from "@/api/warehouse.api";
+import { useGlobalStore, WarehouseLocations } from "@/store/useGlobalStore";
+import { createWarehouseStructure, fetchWarehouseLocations, ZoneStructureDto } from "@/api/warehouse.api";
+import { toast } from "sonner";
 
 export type Zones = {
   name: string;
@@ -28,7 +29,7 @@ export type Zones = {
 export function WarehouseLayout() {
   const { currentUser } = useGlobalStore();
   const { products, fetchInventoryItems: fetchInventoryItems } = useInventoryStore();
-  const [zones, setZones] = useState<Zones[]>([]);
+  const [zones, setZones] = useState<WarehouseLocations[]>([]);
   const [showLocationForm, setShowLocationForm] = useState(false);
   const [newLocation, setNewLocation] = useState<Location>({
     id: "",
@@ -39,6 +40,10 @@ export function WarehouseLayout() {
     barcode: "",
     products: [],
   });
+  const [zonesToCreate, setZonesToCreate] = useState<ZoneStructureDto[]>([
+    { name: '', aisleQuantity: 1, shelvesPerAisle: 1, slotsPerShelf: 1 },
+  ]);
+  const [showZoneDialog, setShowZoneDialog] = useState(false);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -55,7 +60,7 @@ export function WarehouseLayout() {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const response = await getZonesStructure(currentUser.warehouseCode); // Adjust the API endpoint as needed
+        const response = await fetchWarehouseLocations(currentUser.warehouseCode); // Adjust the API endpoint as needed
         console.log("Fetched zones:", response);
         setZones(response);
       } catch (error) {
@@ -120,17 +125,15 @@ export function WarehouseLayout() {
     );
   };
 
-  // Create a 5x5 grid for visualization
-
-  // const zones: Zones = [];
-
-
   return (
     <>
       <Card>
         <CardHeader>
+          <div className="flex-start justify-between items-center mb-2">
+            <Button onClick={() => setShowZoneDialog(true)}>+ Add Zone</Button>
+          </div>
           <div className="space-y-4">
-            {zones.map((zone) => {
+            {zones?.map((zone) => {
               const zoneCode = zone.name;
 
               // Flatten all slot locationCodes under this zone
@@ -326,6 +329,107 @@ export function WarehouseLayout() {
           </AlertDialogContent>
         </AlertDialog>
       )}
+      <AlertDialog open={showZoneDialog} onOpenChange={setShowZoneDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Create Warehouse Zones</AlertDialogTitle>
+            <AlertDialogDescription>
+              Add multiple zones with their structure. You can add more zones before submitting.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+            {zonesToCreate.map((zone, idx) => (
+              <div key={idx} className="grid gap-2 border rounded-md p-4">
+                <Input
+                  placeholder="Zone Name"
+                  value={zone.name}
+                  onChange={(e) =>
+                    setZonesToCreate((prev) =>
+                      prev.map((z, i) => (i === idx ? { ...z, name: e.target.value } : z))
+                    )
+                  }
+                />
+                <Input
+                  placeholder="Aisles"
+                  value={zone.aisleQuantity}
+                  onChange={(e) =>
+                    setZonesToCreate((prev) =>
+                      prev.map((z, i) =>
+                        i === idx ? { ...z, aisleQuantity: Number(e.target.value) } : z
+                      )
+                    )
+                  }
+                />
+                <Input
+                  placeholder="Shelves per Aisle"
+                  value={zone.shelvesPerAisle}
+                  onChange={(e) =>
+                    setZonesToCreate((prev) =>
+                      prev.map((z, i) =>
+                        i === idx ? { ...z, shelvesPerAisle: Number(e.target.value) } : z
+                      )
+                    )
+                  }
+                />
+                <Input
+                  placeholder="Slots per Shelf"
+                  value={zone.slotsPerShelf}
+                  onChange={(e) =>
+                    setZonesToCreate((prev) =>
+                      prev.map((z, i) =>
+                        i === idx ? { ...z, slotsPerShelf: Number(e.target.value) } : z
+                      )
+                    )
+                  }
+                />
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              onClick={() =>
+                setZonesToCreate((prev) => [
+                  ...prev,
+                  { name: '', aisleQuantity: 1, shelvesPerAisle: 1, slotsPerShelf: 1 },
+                ])
+              }
+            >
+              + Add Another Zone
+            </Button>
+          </div>
+
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowZoneDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  const zones = Array.isArray(zonesToCreate) ? zonesToCreate : [zonesToCreate];
+                  await createWarehouseStructure(currentUser.warehouseCode, {
+                    zones: zones,
+                  });
+                  toast.success("Zones created successfully!");
+                  setShowZoneDialog(false);
+                  const updated = await fetchWarehouseLocations(currentUser.warehouseCode);
+                  setZones(updated);
+                } catch (err: any) {
+                  toast.error("Failed to create zones", {
+                    description: err?.message || "Unexpected error",
+                  });
+                }
+                finally {
+                  setShowZoneDialog(false);
+                  setZonesToCreate([]);
+                }
+              }}
+            >
+              Create
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </>
   );
 }
